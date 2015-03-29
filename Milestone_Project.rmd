@@ -1,0 +1,134 @@
+---
+title: "Milestone Project"
+output: pdf_document
+---
+
+### Summary 
+With the advent of higher storage and fast aquisition and transmission methods,  the amount of collected data is growing exponentially. Its almost impossible to go through the data collected without taking help from technology in reading, summarizing and interpreting such huge amount of data which most of the times are unstructured and uncategorized. 
+
+Data analytic becoming more important and is likely be major area therefore the importance of Data scientist role will play huge part of it. Data Scientists may help in areas like Natural language processing (NLP). 
+
+Data provided in the current project requires NLP. The goal of Natural language processing is to allow non-technical people using computers to draw insights from unstructured data written in human language. It may be emails, videos newspaper articles etc. or it may be language translator. It may also help to correct mistakes from the texts gathered using computers from audio files or scanned documents. When dealing with such type of gathered texts it is also very important for computers to be able to predict next or fill the gaps of missing words. The same technique can be applied for smartphones to help people write texts more quickly by guessing the next word and suggesting it to the user. 
+
+
+### Understanding the problem
+Scope of the current project is as follows
+<ol>
+- Download and import the data into R
+- Cleanup the data
+- Perform some exploratory analysis and provide summary of findings
+- Outline next steps for building a predictive model
+</ol>
+
+### Dataset 
+This is the training data avilable at https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip
+The HC Corpora dataset is comprised of the output of crawls of news sites, blogs and twitter. The dataset contains 3 files across four languages (Russian, Finnish, German and English). This project will focus on the English language datasets. The names of the data files are as follows:
+<ol>
+1. en_US.blogs.txt
+2. en_US.twitter.txt
+3. en_US.news.txt
+</ol>
+
+
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(tm)
+library(SnowballC)
+library(RColorBrewer)
+library(wordcloud)
+library(stringr)
+```
+
+Since the data sizes is very large, it will take long time to read them online.  Hence they have been dowloded in local machine and will be read from working directory. 
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+twitter <- readLines("E:/DataSciences/CapstoneData/en_US.twitter.txt")
+blogs <- readLines("E:/DataSciences/CapstoneData/en_US.blogs.txt")
+news <- readLines("E:/DataSciences/CapstoneData/en_US.news.txt")
+```
+
+Lets examine length of each of these files
+
+No of lines in en_us.twitter.txt 
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+length(twitter)
+```
+
+No of lines in en_us.blogs.txt 
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+length(blogs)
+```
+
+No of lines in en_us.news.txt 
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+length(news)
+```
+
+Since the data size is very large, lets take a section of data.  In this case, we take a subset of data, about 75000 lines from each file.  
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+stwitter <- sample(twitter, 75000)
+sblogs   <- sample(blogs, 75000)
+snews <- sample(news,75000)
+```
+
+### Creating Wordcloud
+A word cloud is a visual representation for text data, typically used to depict keyword metadata (tags) on websites, or to visualize free form text. Tags are usually single words, and the importance of each tag is shown with font size or color.This format is useful for quickly perceiving the most prominent terms and for locating a term alphabetically to determine its relative prominence. When used as website navigation aids, the terms are hyperlinked to items associated with the tag.
+
+Lets examine most frequent words in the files by creating a wordcloud for each text file
+
+### Wordcloud for Twitter Data (subset of en_us.twitter.txt)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+stwit<-Corpus(VectorSource(stwitter), readerControl=list (language="eng", reader=readPlain))
+stwit <- tm_map(stwit, stripWhitespace)
+stwit <- tm_map(stwit, tolower)
+stwit <- tm_map(stwit, PlainTextDocument)
+stwit <- tm_map(stwit, removeWords, stopwords("english"))
+stwit <- tm_map(stwit, stemDocument)
+wordcloud(stwit, scale=c(5,0.5), max.words=1000, random.order=FALSE, rot.per=0.5, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
+```
+
+### Wordcloud for Blogs Data (subset of en_us.blogs.txt)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+sblogs<-Corpus(VectorSource(sblogs), readerControl=list (language="eng", reader=readPlain))
+sblogs <- tm_map(sblogs, stripWhitespace)
+sblogs <- tm_map(sblogs, tolower)
+sblogs <- tm_map(sblogs, PlainTextDocument)
+sblogs <- tm_map(sblogs, removeWords, stopwords("english"))
+sblogs <- tm_map(sblogs, stemDocument)
+wordcloud(sblogs, scale=c(5,0.5), max.words=1000, random.order=FALSE, rot.per=0.5, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
+```
+
+### Wordcloud for News Data (subset of en_us.news.txt)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+snews<-Corpus(VectorSource(snews), readerControl=list (language="eng", reader=readPlain))
+snews <- tm_map(snews, stripWhitespace)
+snews <- tm_map(snews, tolower)
+snews <- tm_map(snews, PlainTextDocument)
+snews <- tm_map(snews, removeWords, stopwords("english"))
+snews <- tm_map(snews, stemDocument)
+wordcloud(snews, scale=c(5,0.5), max.words=1000, random.order=FALSE, rot.per=0.5, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
+```
+
+### Conclusion
+Using Natural Language Processing (NLP), it is possible to interpret unstructured data and draw meaningful conclusions, as shown in this example at a very high level. A full fledged predictive model is the next goal. 
+
+
+### Next Steps
+<ol>
+- creation of  test and train data sets for each files with a smaller number of records (to reduce computation time)
+- Cleaning and filtering
+- Finding n-grams in the sentences (2-grams, 3-grams etc.)
+- Training the model 
+- Performing prediction 
+- Creation of a shiny app for an interactive application
+</ol>
+
+
+end of document
+
+
